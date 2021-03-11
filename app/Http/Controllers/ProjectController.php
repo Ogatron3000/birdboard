@@ -22,7 +22,7 @@ class ProjectController extends Controller
     {
         $attributes = request()->validate(['title' => 'required', 'description' => 'required']);
 
-        Project::create(request(['title', 'description']));
+        Project::create($attributes);
 
         return redirect()->route('projects.index');
     }
