@@ -13,16 +13,40 @@ class ProjectsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
-    public function test_only_auth_user_can_create_project()
+    // GUEST
+
+    public function test_guest_cannot_create_project(): void
     {
         $project = Project::factory()->raw();
 
         $this->post(route('projects.store'), $project)->assertRedirect(route('login'));
     }
 
+    public function test_guest_cannot_view_projects(): void
+    {
+        $this->get(route('projects.index'))->assertRedirect(route('login'));
+    }
+
+    public function test_guest_cannot_view_a_single_project(): void
+    {
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertRedirect(route('login'));
+    }
+
+    public function test_guest_cannot_view_create_project_page(): void
+    {
+        $this->get(route('projects.create'))->assertRedirect(route('login'));
+    }
+
+
+    // AUTHENTICATED USER
+
     public function test_user_can_create_project(): void
     {
         $this->actingAs(User::factory()->create());
+
+        $this->get(route('projects.create'))->assertStatus(200);
 
         $attributes = [
             'title' => $this->faker->title,
@@ -36,13 +60,37 @@ class ProjectsTest extends TestCase
         $this->get(route('projects.index'))->assertSee($attributes['title']);
     }
 
-    public function test_user_can_view_project(): void
+    public function test_user_can_view_only_their_projects(): void
     {
-        $project = Project::factory()->create();
+        $this->actingAs(User::factory()->create());
+
+        $project = Project::factory()->create(['user_id' => auth()->id()]);
+        $otherProject = Project::factory()->create();
+
+
+        $this->get(route('projects.index'))
+            ->assertSee($project->title)
+            ->assertDontSee($otherProject->title);
+    }
+
+    public function test_user_can_view_their_single_project(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $project = Project::factory()->create(['user_id' => auth()->id()]);
 
         $this->get($project->path())
             ->assertSee($project->title)
             ->assertSee($project->description);
+    }
+
+    public function test_user_cannot_view_single_project_of_other_user(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertStatus(403);
     }
 
     public function test_project_must_have_title(): void
