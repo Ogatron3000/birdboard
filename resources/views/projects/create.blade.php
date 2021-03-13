@@ -1,19 +1,28 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-<form action="{{ route('projects.store') }}" method="POST">
-    @csrf
+<x-app-layout>
 
-    <input type="text" name="title">
-    <input type="text" name="description">
-    <button type="submit">Submit</button>
-</form>
-</body>
-</html>
+    <div class="flex sm:justify-center pt-6">
+        <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
+            <form action="{{ route('projects.store') }}" method="POST">
+                @csrf
+
+                <div>
+                    <x-label for="title" :value="__('Title')" />
+                    <x-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title')" required autofocus />
+                </div>
+
+                <div class="mt-4">
+                    <x-label for="description" :value="__('Description')" />
+                    <x-input id="description" class="block mt-1 w-full" type="text" name="description" :value="old('description')" required autofocus />
+                </div>
+
+                <div class="flex items-center justify-end mt-4">
+                    <x-button class="ml-3">
+                        {{ __('Submit') }}
+                    </x-button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</x-app-layout>

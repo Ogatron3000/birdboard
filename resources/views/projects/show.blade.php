@@ -1,16 +1,39 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Projects</title>
-</head>
-<body>
+<x-app-layout>
 
-<h1>{{ $project->title }}</h1>
-<p>{{ $project->description }}</p>
+    <header class="flex justify-between items-end max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div class="flex font-semibold text-gray-400 leading-tight">
+            <p>
+                <a href="{{ route('projects.index') }}">{{ __('My Projects') }}</a> / {{ $project->title }}
+            </p>
+        </div>
+    </header>
 
-</body>
-</html>
+    <main>
+        <div class="flex justify-between max-w-7xl mx-auto px-4">
+            <div class="w-3/4 px-4">
+                <div class="mb-8">
+                    <h2 class="mb-4 text-lg">Tasks</h2>
+                    <div class="w-full p-4 mb-4 bg-white shadow rounded">Task 1</div>
+                    <div class="w-full p-4 mb-4 bg-white shadow rounded">Task 1</div>
+                    <div class="w-full p-4 bg-white shadow rounded">Task 1</div>
+                </div>
+
+                <div>
+                    <h2 class="mb-4 text-lg">Notes</h2>
+                    <div class="w-full h-40 p-4 mb-4 bg-white shadow rounded">Bla bla bla</div>
+                </div>
+            </div>
+
+            <x-card class="w-1/4">
+                <x-slot name="title">
+                    {{ $project->title }}
+                </x-slot>
+                <x-slot name="description">
+                    {{ \Illuminate\Support\Str::limit($project->description, 100) }}
+                </x-slot>
+            </x-card>
+        </div>
+    </main>
+
+
+</x-app-layout>

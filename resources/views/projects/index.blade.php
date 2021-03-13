@@ -1,24 +1,29 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Projects</title>
-</head>
-<body>
+<x-app-layout>
 
-<h1>Projects</h1>
-<ul>
-    @forelse($projects as $project)
-        <li>
-            <a href="{{ $project->path() }}">{{ $project->title }}</a>
-        </li>
-    @empty
-        <p>No projects yet.</p>
-    @endforelse
-</ul>
+    <header class="flex justify-between items-end max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('My Projects') }}
+        </h2>
+        <x-button>
+            <a href="{{ route('projects.create') }}">New Project</a>
+        </x-button>
+    </header>
 
-</body>
-</html>
+    <main>
+        <div class="flex flex-wrap max-w-7xl mx-auto px-4">
+            @forelse($projects as $project)
+                <x-card>
+                    <x-slot name="title">
+                        <a href="{{ $project->path() }}">{{ $project->title }}</a>
+                    </x-slot>
+                    <x-slot name="description">
+                        {{ \Illuminate\Support\Str::limit($project->description, 100) }}
+                    </x-slot>
+                </x-card>
+            @empty
+                <p>No projects yet.</p>
+            @endforelse
+        </div>
+    </main>
+
+</x-app-layout>
