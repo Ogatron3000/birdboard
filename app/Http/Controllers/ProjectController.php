@@ -34,8 +34,8 @@ class ProjectController extends Controller
         $attributes = request()->validate(['title' => 'required', 'description' => 'required']);
 
         // $attributes['user_id'] = auth()->id();
-        auth()->user()->projects()->create($attributes);
+        $project = auth()->user()->projects()->create($attributes);
 
-        return redirect()->route('projects.index');
+        return redirect($project->path());
     }
 }
