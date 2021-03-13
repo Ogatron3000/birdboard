@@ -13,9 +13,9 @@
             <div class="w-3/4 px-4">
                 <div class="mb-8">
                     <h2 class="mb-4 text-lg">Tasks</h2>
-                    <div class="w-full p-4 mb-4 bg-white shadow rounded">Task 1</div>
-                    <div class="w-full p-4 mb-4 bg-white shadow rounded">Task 1</div>
-                    <div class="w-full p-4 bg-white shadow rounded">Task 1</div>
+                    @foreach($project->tasks as $task)
+                        <div class="w-full p-4 mb-4 bg-white shadow rounded">{{ $task->body }}</div>
+                    @endforeach
                 </div>
 
                 <div>

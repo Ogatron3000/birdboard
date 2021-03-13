@@ -17,7 +17,7 @@ class ProjectsTest extends TestCase
 
     public function test_guest_cannot_create_project(): void
     {
-        $project = Project::factory()->raw();
+        $project = $this->createRawProject();
 
         $this->post(route('projects.store'), $project)->assertRedirect(route('login'));
     }
@@ -29,7 +29,7 @@ class ProjectsTest extends TestCase
 
     public function test_guest_cannot_view_a_single_project(): void
     {
-        $project = Project::factory()->create();
+        $project = $this->createProject();
 
         $this->get($project->path())->assertRedirect(route('login'));
     }
@@ -44,7 +44,7 @@ class ProjectsTest extends TestCase
 
     public function test_user_can_create_project(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $this->get(route('projects.create'))->assertStatus(200);
 
@@ -62,11 +62,11 @@ class ProjectsTest extends TestCase
 
     public function test_user_can_view_only_their_projects(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
-        $project = Project::factory()->create(['user_id' => auth()->id()]);
-        $otherProject = Project::factory()->create();
+        $project = $this->createProject('auth_user');
 
+        $otherProject = $this->createProject();
 
         $this->get(route('projects.index'))
             ->assertSee($project->title)
@@ -75,9 +75,9 @@ class ProjectsTest extends TestCase
 
     public function test_user_can_view_their_single_project(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
-        $project = Project::factory()->create(['user_id' => auth()->id()]);
+        $project = $this->createProject('auth_user');
 
         $this->get($project->path())
             ->assertSee($project->title)
@@ -86,27 +86,27 @@ class ProjectsTest extends TestCase
 
     public function test_user_cannot_view_single_project_of_other_user(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
-        $project = Project::factory()->create();
+        $project = $this->createProject();
 
         $this->get($project->path())->assertStatus(403);
     }
 
     public function test_project_must_have_title(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
-        $project = Project::factory()->raw(['title' => '']);
+        $project = $this->createRawProject(['title' => '']);
 
         $this->post(route('projects.store'), $project)->assertSessionHasErrors('title');
     }
 
     public function test_project_must_have_description(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
-        $project = Project::factory()->raw(['description' => '']);
+        $project = $this->createRawProject(['description' => '']);
 
         $this->post(route('projects.store'), $project)->assertSessionHasErrors('description');
     }
