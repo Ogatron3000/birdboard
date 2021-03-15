@@ -9,11 +9,11 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description'];
+    protected $fillable = ['title', 'description', 'notes'];
 
     public function path()
     {
-        return "/projects/$this->id";
+        return "/projects/{$this->id}";
     }
 
     public function user()

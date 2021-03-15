@@ -37,7 +37,18 @@
 
                 <div>
                     <h2 class="mb-4 text-lg">Notes</h2>
-                    <div class="w-full h-40 p-4 mb-4 bg-white shadow rounded">Bla bla bla</div>
+                    <form action="{{ $project->path() }}" method="POST">
+                        @method('PATCH')
+                        @csrf
+
+                        <textarea name="notes" class="w-full h-40 p-4 mb-4 bg-white shadow rounded border-0">{{ $project->notes }}</textarea>
+
+                        <div class="flex items-center justify-end">
+                            <x-button>
+                                {{ __('Save Notes') }}
+                            </x-button>
+                        </div>
+                    </form>
                 </div>
             </div>
 

@@ -50,14 +50,41 @@ class ProjectsTest extends TestCase
 
         $attributes = [
             'title' => $this->faker->title,
-            'description' => $this->faker->sentence
+            'description' => $this->faker->sentence,
+            'notes' => $this->faker->text
         ];
 
-        $this->post(route('projects.store'), $attributes); //->assertRedirect(route('projects.index'));
+        $response = $this->post(route('projects.store'), $attributes);
+
+        $project = Project::where($attributes)->get()->first();
+
+        $response->assertRedirect($project->path());
 
         $this->assertDatabaseHas('projects', $attributes);
 
         $this->get(route('projects.index'))->assertSee($attributes['title']);
+    }
+
+    public function test_user_can_update_project(): void
+    {
+        $this->signIn();
+
+        $project = $this->createProject('auth_user');
+
+        $this->patch($project->path(), ['notes' => 'new notes, right here!']);
+
+        $this->assertDatabaseHas('projects', ['notes' => 'new notes, right here!']);
+    }
+
+    public function test_user_cannot_update_project_of_other_user(): void
+    {
+        $this->signIn();
+
+        $project = $this->createProject();
+
+        $this->patch($project->path(), ['notes' => 'new notes, right here!'])->assertStatus(403);
+
+        $this->assertDatabaseMissing('projects', ['notes' => 'new notes, right here!']);
     }
 
     public function test_user_can_view_only_their_projects(): void
