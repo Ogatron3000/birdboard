@@ -16,7 +16,7 @@ class ProjectTest extends TestCase
     {
         $project = $this->createProject();
 
-        $this->assertEquals('http://birdboard.test/projects/' . $project->id, $project->path());
+        $this->assertEquals('/projects/' . $project->id, $project->path());
     }
 
     public function test_belongs_to_user(): void

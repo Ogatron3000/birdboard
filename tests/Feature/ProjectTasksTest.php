@@ -44,6 +44,32 @@ class ProjectTasksTest extends TestCase
         $this->get($project->path())->assertSee($task->body);
     }
 
+    public function test_user_can_update_tasks()
+    {
+        $this->signIn();
+
+        $project = $this->createProject('auth_user');
+
+        $task = $project->addTask('Watch out, new task, coming through!');
+
+        $this->patch($task->path(), ['body' => 'changed', 'completed' => true]);
+
+        $this->assertDatabaseHas('tasks', ['body' => 'changed', 'completed' => true]);
+    }
+
+    public function test_user_cannot_update_tasks_of_other_user_project()
+    {
+        $this->signIn();
+
+        $project = $this->createProject();
+
+        $task = $project->addTask('Watch out, new task, coming through!');
+
+        $this->patch($task->path(), ['body' => 'changed', 'completed' => true])->assertStatus(403);
+
+        $this->assertDatabaseMissing('tasks', ['body' => 'changed', 'completed' => true]);
+    }
+
     public function test_project_task_must_have_body(): void
     {
         $this->signIn();
