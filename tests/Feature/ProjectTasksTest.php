@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ProjectTasksTest extends TestCase
@@ -37,22 +38,22 @@ class ProjectTasksTest extends TestCase
 
         $project = $this->createProject('auth_user');
 
-        // or do it manually -- without addTask? Better?
-        // reduced test dependency on unit test
-        $task = $project->addTask('Watch out, new task, coming through!');
+        $this->post($project->path() . '/tasks', $task = ['body' => 'New task, coming through!']);
 
-        $this->get($project->path())->assertSee($task->body);
+        $this->get($project->path())->assertSee($task);
     }
 
     public function test_user_can_update_tasks()
     {
-        $this->signIn();
+        // $this->signIn();
+        //
+        // $project = $this->createProject('auth_user');
+        //
+        // $task = $project->addTask('Watch out, new task, coming through!');
 
-        $project = $this->createProject('auth_user');
+        $project = ProjectFactory::ownedBy($this->signIn())->withTasks(1)->create();
 
-        $task = $project->addTask('Watch out, new task, coming through!');
-
-        $this->patch($task->path(), ['body' => 'changed', 'completed' => true]);
+        $this->patch($project->tasks[0]->path(), ['body' => 'changed', 'completed' => true]);
 
         $this->assertDatabaseHas('tasks', ['body' => 'changed', 'completed' => true]);
     }
@@ -61,20 +62,16 @@ class ProjectTasksTest extends TestCase
     {
         $this->signIn();
 
-        $project = $this->createProject();
+        $project = ProjectFactory::withTasks(1)->create();
 
-        $task = $project->addTask('Watch out, new task, coming through!');
-
-        $this->patch($task->path(), ['body' => 'changed', 'completed' => true])->assertStatus(403);
+        $this->patch($project->tasks[0]->path(), ['body' => 'changed', 'completed' => true])->assertStatus(403);
 
         $this->assertDatabaseMissing('tasks', ['body' => 'changed', 'completed' => true]);
     }
 
     public function test_project_task_must_have_body(): void
     {
-        $this->signIn();
-
-        $project = $this->createProject('auth_user');
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
 
         $task = Task::factory()->raw(['body' => '']);
 

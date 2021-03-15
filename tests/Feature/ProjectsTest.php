@@ -4,9 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\User;
-use Database\Factories\ProjectFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ProjectsTest extends TestCase
@@ -60,16 +60,18 @@ class ProjectsTest extends TestCase
 
         $response->assertRedirect($project->path());
 
-        $this->assertDatabaseHas('projects', $attributes);
+        // $this->assertDatabaseHas('projects', $attributes);
 
         $this->get(route('projects.index'))->assertSee($attributes['title']);
     }
 
     public function test_user_can_update_project(): void
     {
-        $this->signIn();
+        // $this->signIn();
+        //
+        // $project = $this->createProject('auth_user');
 
-        $project = $this->createProject('auth_user');
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
 
         $this->patch($project->path(), ['notes' => 'new notes, right here!']);
 
@@ -82,16 +84,14 @@ class ProjectsTest extends TestCase
 
         $project = $this->createProject();
 
-        $this->patch($project->path(), ['notes' => 'new notes, right here!'])->assertStatus(403);
+        $this->patch($project->path(), $data = ['notes' => 'new notes, right here!'])->assertStatus(403);
 
-        $this->assertDatabaseMissing('projects', ['notes' => 'new notes, right here!']);
+        $this->assertDatabaseMissing('projects', $data);
     }
 
     public function test_user_can_view_only_their_projects(): void
     {
-        $this->signIn();
-
-        $project = $this->createProject('auth_user');
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
 
         $otherProject = $this->createProject();
 
@@ -102,9 +102,7 @@ class ProjectsTest extends TestCase
 
     public function test_user_can_view_their_single_project(): void
     {
-        $this->signIn();
-
-        $project = $this->createProject('auth_user');
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
 
         $this->get($project->path())
             ->assertSee($project->title)
