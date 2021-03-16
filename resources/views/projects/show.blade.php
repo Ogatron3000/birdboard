@@ -6,6 +6,9 @@
                 <a href="{{ route('projects.index') }}">{{ __('My Projects') }}</a> / {{ $project->title }}
             </p>
         </div>
+        <x-button>
+            <a href="{{ $project->path() . '/edit' }}">Edit Project</a>
+        </x-button>
     </header>
 
     <main>

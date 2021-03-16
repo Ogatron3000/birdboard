@@ -15,27 +15,14 @@ class ProjectsTest extends TestCase
 
     // GUEST
 
-    public function test_guest_cannot_create_project(): void
-    {
-        $project = $this->createRawProject();
-
-        $this->post(route('projects.store'), $project)->assertRedirect(route('login'));
-    }
-
-    public function test_guest_cannot_view_projects(): void
-    {
-        $this->get(route('projects.index'))->assertRedirect(route('login'));
-    }
-
-    public function test_guest_cannot_view_a_single_project(): void
+    public function test_guest_cannot_manipulate_projects(): void
     {
         $project = $this->createProject();
 
+        $this->post(route('projects.store'), array($project))->assertRedirect(route('login'));
+        $this->get(route('projects.index'))->assertRedirect(route('login'));
         $this->get($project->path())->assertRedirect(route('login'));
-    }
-
-    public function test_guest_cannot_view_create_project_page(): void
-    {
+        $this->get($project->path() . '/edit')->assertRedirect(route('login'));
         $this->get(route('projects.create'))->assertRedirect(route('login'));
     }
 
@@ -73,9 +60,15 @@ class ProjectsTest extends TestCase
 
         $project = ProjectFactory::ownedBy($this->signIn())->create();
 
-        $this->patch($project->path(), ['notes' => 'new notes, right here!']);
+        $this->get($project->path() . '/edit')->assertOk();
 
-        $this->assertDatabaseHas('projects', ['notes' => 'new notes, right here!']);
+        $this->patch($project->path(), $updated = [
+            'title'       => 'brand new title',
+            'description' => 'new desc yo',
+            'notes'       => 'new notes, right here!',
+        ]);
+
+        $this->assertDatabaseHas('projects', $updated);
     }
 
     public function test_user_cannot_update_project_of_other_user(): void
@@ -83,6 +76,8 @@ class ProjectsTest extends TestCase
         $this->signIn();
 
         $project = $this->createProject();
+
+        $this->get($project->path() . '/edit')->assertStatus(403);
 
         $this->patch($project->path(), $data = ['notes' => 'new notes, right here!'])->assertStatus(403);
 
