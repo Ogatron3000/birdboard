@@ -3,10 +3,12 @@
 namespace Tests\Unit;
 
 use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Facades\Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
-class Task extends TestCase
+class TaskTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -26,5 +28,27 @@ class Task extends TestCase
         $task = $project->addTask('new task!');
 
         $this->assertEquals('/projects/' . $project->id . '/tasks/' . $task->id, $task->path());
+    }
+
+    public function test_task_can_be_completed()
+    {
+        $task = Task::factory()->create();
+
+        $this->assertFalse($task->completed);
+
+        $task->complete();
+
+        $this->assertTrue($task->fresh()->completed);
+    }
+
+    public function test_task_can_be_marked_as_incomplete()
+    {
+        $task = Task::factory()->create(['completed' => true]);
+
+        $this->assertTrue($task->completed);
+
+        $task->incomplete();
+
+        $this->assertFalse($task->fresh()->completed);
     }
 }

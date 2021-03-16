@@ -35,4 +35,9 @@ class Project extends Model
     {
         return $this->hasMany(Activity::class);
     }
+
+    public function createActivity($description)
+    {
+        return $this->activities()->create(compact('description'));
+    }
 }

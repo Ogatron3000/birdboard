@@ -53,9 +53,29 @@ class ProjectTasksTest extends TestCase
 
         $project = ProjectFactory::ownedBy($this->signIn())->withTasks(1)->create();
 
-        $this->patch($project->tasks[0]->path(), ['body' => 'changed', 'completed' => true]);
+        $this->patch($project->tasks[0]->path(), ['body' => 'changed']);
 
-        $this->assertDatabaseHas('tasks', ['body' => 'changed', 'completed' => true]);
+        $this->assertDatabaseHas('tasks', ['body' => 'changed']);
+    }
+
+    public function test_user_can_complete_tasks()
+    {
+        $project = ProjectFactory::ownedBy($this->signIn())->withTasks(1)->create();
+
+        $this->patch($project->tasks[0]->path(), ['body' => 'not testing body', 'completed' => true]);
+
+        $this->assertDatabaseHas('tasks', ['completed' => true]);
+    }
+
+    public function test_user_can_mark_tasks_as_incomplete()
+    {
+        $project = ProjectFactory::ownedBy($this->signIn())->withTasks(1)->create();
+
+        $this->patch($project->tasks[0]->path(), ['body' => 'not testing body', 'completed' => true]);
+
+        $this->patch($project->tasks[0]->path(), ['body' => 'not testing body', 'completed' => false]);
+
+        $this->assertDatabaseHas('tasks', ['completed' => false]);
     }
 
     public function test_user_cannot_update_tasks_of_other_user_project()

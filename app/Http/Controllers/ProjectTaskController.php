@@ -34,11 +34,11 @@ class ProjectTaskController extends Controller
         // or restructure routes to /tasks/{task} - dedicated tasks route
         $this->authorize('update', $task->project);
 
-        request()->validate(['body' => 'required']);
+        $task->update(request()->validate(['body' => 'required']));
 
-        $task->update(['body'      => request()->get('body'),
-                       'completed' => request()->has('completed'),
-        ]);
+        $method = request('completed') ? 'complete' : 'incomplete';
+
+        $task->$method();
 
         return redirect($project->path());
     }
