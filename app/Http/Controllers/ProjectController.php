@@ -35,8 +35,6 @@ class ProjectController extends Controller
     {
         $attributes = $this->validateInput();
 
-        $attributes['notes'] = request('notes');
-
         // $attributes['user_id'] = auth()->id();
         $project = auth()->user()->projects()->create($attributes);
 
@@ -60,18 +58,18 @@ class ProjectController extends Controller
 
         $attributes = $this->validateInput();
 
-        $attributes['notes'] = request('notes');
-
         $project->update($attributes);
 
         return redirect($project->path());
     }
 
+    // we could extract this into UpdateProjectRequest
     protected function validateInput(): array
     {
         return request()->validate([
-            'title'       => 'required',
-            'description' => 'required',
+            'title'       => 'sometimes|required',
+            'description' => 'sometimes|required',
+            'notes' => 'nullable'
         ]);
     }
 

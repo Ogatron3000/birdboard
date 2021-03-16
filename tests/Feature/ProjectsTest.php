@@ -71,6 +71,17 @@ class ProjectsTest extends TestCase
         $this->assertDatabaseHas('projects', $updated);
     }
 
+    public function test_user_can_update_project_notes(): void
+    {
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
+
+        $this->patch($project->path(), $updated = [
+            'notes' => 'new notes, right here!',
+        ]);
+
+        $this->assertDatabaseHas('projects', $updated);
+    }
+
     public function test_user_cannot_update_project_of_other_user(): void
     {
         $this->signIn();
@@ -79,9 +90,13 @@ class ProjectsTest extends TestCase
 
         $this->get($project->path() . '/edit')->assertStatus(403);
 
-        $this->patch($project->path(), $data = ['notes' => 'new notes, right here!'])->assertStatus(403);
+        $this->patch($project->path(), $updated = [
+            'title'       => 'brand new title',
+            'description' => 'new desc yo',
+            'notes'       => 'new notes, right here!',
+        ])->assertStatus(403);
 
-        $this->assertDatabaseMissing('projects', $data);
+        $this->assertDatabaseMissing('projects', $updated);
     }
 
     public function test_user_can_view_only_their_projects(): void
