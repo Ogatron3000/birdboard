@@ -40,9 +40,9 @@ class ActivityFeedTest extends TestCase
 
     public function test_completing_task_generates_activity()
     {
-        $project = ProjectFactory::withTasks(1)->create();
+        $project = ProjectFactory::ownedBy($this->signIn())->withTasks(1)->create();
 
-        $project->tasks[0]->update(['completed' => true]);
+        $this->patch($project->tasks[0]->path(), ['body' => 'irrelevant', 'completed' => true]);
 
         $this->assertCount(3, $project->activities);
         $this->assertEquals('completed task', $project->activities[2]->description);

@@ -23,16 +23,19 @@ class Task extends Model
             Activity::create(['description' => 'added task', 'project_id' => $task->project->id]);
         });
 
-        static::updated(function ($task) {
-            if ( ! $task->complted) {
-                Activity::create(['description' => 'completed task', 'project_id' => $task->project->id]);
-            }
-        });
+        // static::updated(function ($task) {
+        //     if ( ! $task->completed) {
+        //         Activity::create(['description' => 'completed task', 'project_id' => $task->project->id]);
+        //     }
+        // });
     }
 
     public function complete()
     {
-        return $this->update(['completed' => true]);
+        $this->update(['completed' => true]);
+
+        // moved from boot, which means now we have to hit the controller to test it
+        $this->project->createActivity('completed task');
     }
 
     public function incomplete()
