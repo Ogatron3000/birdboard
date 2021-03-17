@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Facades\Tests\Setup\ProjectFactory;
@@ -37,7 +38,12 @@ class TriggerActivityTest extends TestCase
         $project->addTask('new task');
 
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('created_task', $project->activity[1]->description);
+
+        $activity = $project->activity->last();
+
+        $this->assertEquals('created_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
+        $this->assertEquals('new task', $activity->subject->body);
     }
 
     public function test_completing_task()
@@ -47,7 +53,11 @@ class TriggerActivityTest extends TestCase
         $this->patch($project->tasks[0]->path(), ['body' => 'irrelevant', 'completed' => true]);
 
         $this->assertCount(3, $project->activity);
-        $this->assertEquals('completed_task', $project->activity[2]->description);
+
+        $activity = $project->activity->last();
+
+        $this->assertEquals('completed_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
     }
 
     public function test_uncompleting_task()
@@ -61,7 +71,11 @@ class TriggerActivityTest extends TestCase
         $project->fresh();
 
         $this->assertCount(4, $project->activity);
-        $this->assertEquals('uncompleted_task', $project->activity[3]->description);
+
+        $activity = $project->activity->last();
+
+        $this->assertEquals('uncompleted_task', $activity->description);
+        $this->assertInstanceOf(Task::class, $activity->subject);
     }
 
     public function test_deleting_task()
@@ -71,6 +85,10 @@ class TriggerActivityTest extends TestCase
         $project->tasks[0]->delete();
 
         $this->assertCount(3, $project->activity);
-        $this->assertEquals('deleted_task', $project->activity[2]->description);
+
+        $activity = $project->activity->last();
+
+        $this->assertEquals('deleted_task', $activity->description);
+        $this->assertNull($activity->subject);
     }
 }
