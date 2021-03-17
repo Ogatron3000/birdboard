@@ -17,6 +17,11 @@ class ProjectObserver
         $project->createActivity('created');
     }
 
+    public function updating(Project $project)
+    {
+        $project->old = $project->toArray();
+    }
+
     /**
      * Handle the Project "updated" event.
      *

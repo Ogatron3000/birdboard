@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Project extends Model
 {
     use HasFactory;
 
     protected $fillable = ['title', 'description', 'notes'];
+
+    public $old = [];
 
     public function path()
     {
@@ -39,6 +42,12 @@ class Project extends Model
 
     public function createActivity($description)
     {
-        return $this->activity()->create(compact('description'));
+        return $this->activity()->create([
+            'description' => $description,
+            'changes' => [
+                'old' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+                'new' => Arr::except($this->getChanges(), 'updated_at'),
+            ]
+        ]);
     }
 }

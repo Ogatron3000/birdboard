@@ -7,6 +7,7 @@ use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Facades\Tests\Setup\ProjectFactory;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class TriggerActivityTest extends TestCase
@@ -28,7 +29,18 @@ class TriggerActivityTest extends TestCase
         $project->update(['title' => 'updated title']);
 
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('updated', $project->activity[1]->description);
+
+        $activity = $project->activity->last();
+
+
+        $this->assertEquals('updated', $activity->description);
+
+        $expected = [
+            'old' => Arr::except(array_diff($project->old, $project->getAttributes()), 'updated_at'),
+            'new' => Arr::except($project->getChanges(), 'updated_at'),
+        ];
+
+        $this->assertEquals($expected, $activity->changes);
     }
 
     public function test_creating_task()
