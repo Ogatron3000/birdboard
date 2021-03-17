@@ -44,10 +44,19 @@ class Project extends Model
     {
         return $this->activity()->create([
             'description' => $description,
-            'changes' => [
+            'changes' => $this->recordChanges($description)
+        ]);
+    }
+
+    protected function recordChanges($description)
+    {
+        if ($description === 'updated') {
+            return [
                 'old' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
                 'new' => Arr::except($this->getChanges(), 'updated_at'),
-            ]
-        ]);
+            ];
+        }
+
+        return null;
     }
 }
