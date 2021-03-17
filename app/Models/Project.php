@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
+use App\RecordsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordsActivity;
 
     protected $fillable = ['title', 'description', 'notes'];
-
-    public $old = [];
 
     public function path()
     {
@@ -38,25 +37,5 @@ class Project extends Model
     {
         // add with to solve N+1 problem
         return $this->hasMany(Activity::class)->with('subject')->latest();
-    }
-
-    public function createActivity($description)
-    {
-        return $this->activity()->create([
-            'description' => $description,
-            'changes' => $this->recordChanges($description)
-        ]);
-    }
-
-    protected function recordChanges($description)
-    {
-        if ($description === 'updated') {
-            return [
-                'old' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
-                'new' => Arr::except($this->getChanges(), 'updated_at'),
-            ];
-        }
-
-        return null;
     }
 }

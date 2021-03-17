@@ -22,7 +22,7 @@ class TriggerActivityTest extends TestCase
 
         $activity = $project->activity->last();
 
-        $this->assertEquals('created', $activity->description);
+        $this->assertEquals('created_project', $activity->description);
 
         $this->assertNull($activity->changes);
     }
@@ -37,7 +37,7 @@ class TriggerActivityTest extends TestCase
 
         $activity = $project->activity->last();
 
-        $this->assertEquals('updated', $activity->description);
+        $this->assertEquals('updated_project', $activity->description);
 
         $expected = [
             'old' => Arr::except(array_diff($project->old, $project->getAttributes()), 'updated_at'),
