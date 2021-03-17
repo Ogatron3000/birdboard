@@ -33,7 +33,8 @@ class Project extends Model
 
     public function activity()
     {
-        return $this->hasMany(Activity::class)->latest();
+        // add with to solve N+1 problem
+        return $this->hasMany(Activity::class)->with('subject')->latest();
     }
 
     public function createActivity($description)

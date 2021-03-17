@@ -72,8 +72,8 @@
 
                                 <li class="flex justify-between {{ $loop->last ? '' : "mb-1"}}">
                                     @include("projects.activity.{$activity->description}")
-                                    <span class="text-gray-400">
-                                        {{ $activity->created_at->diffForHumans() }}
+                                    <span class="text-gray-400 text-right">
+                                        {{ $activity->created_at->diffForHumans(null, true) }}
                                     </span>
                                 </li>
                             @endforeach
