@@ -39,14 +39,14 @@ class Task extends Model
         $this->update(['completed' => true]);
 
         // moved from boot, which means now we have to hit the controller to test it
-        $this->project->createActivity('completed task');
+        $this->project->createActivity('completed_task');
     }
 
     public function uncomplete()
     {
         $this->update(['completed' => false]);
 
-        $this->project->createActivity('uncompleted task');
+        $this->project->createActivity('uncompleted_task');
     }
 
     public function project()

@@ -37,7 +37,7 @@ class TriggerActivityTest extends TestCase
         $project->addTask('new task');
 
         $this->assertCount(2, $project->activity);
-        $this->assertEquals('created task', $project->activity[1]->description);
+        $this->assertEquals('created_task', $project->activity[1]->description);
     }
 
     public function test_completing_task()
@@ -47,7 +47,7 @@ class TriggerActivityTest extends TestCase
         $this->patch($project->tasks[0]->path(), ['body' => 'irrelevant', 'completed' => true]);
 
         $this->assertCount(3, $project->activity);
-        $this->assertEquals('completed task', $project->activity[2]->description);
+        $this->assertEquals('completed_task', $project->activity[2]->description);
     }
 
     public function test_uncompleting_task()
@@ -61,7 +61,7 @@ class TriggerActivityTest extends TestCase
         $project->fresh();
 
         $this->assertCount(4, $project->activity);
-        $this->assertEquals('uncompleted task', $project->activity[3]->description);
+        $this->assertEquals('uncompleted_task', $project->activity[3]->description);
     }
 
     public function test_deleting_task()
@@ -71,6 +71,6 @@ class TriggerActivityTest extends TestCase
         $project->tasks[0]->delete();
 
         $this->assertCount(3, $project->activity);
-        $this->assertEquals('deleted task', $project->activity[2]->description);
+        $this->assertEquals('deleted_task', $project->activity[2]->description);
     }
 }

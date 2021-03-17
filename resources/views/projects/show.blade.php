@@ -55,14 +55,34 @@
                 </div>
             </div>
 
-            <x-card class="w-1/4">
-                <x-slot name="title">
-                    {{ $project->title }}
-                </x-slot>
-                <x-slot name="description">
-                    {{ \Illuminate\Support\Str::limit($project->description, 100) }}
-                </x-slot>
-            </x-card>
+            <div class="w-1/4">
+                <x-card>
+                    <x-slot name="title">
+                        {{ $project->title }}
+                    </x-slot>
+                    <x-slot name="description">
+                        {{ \Illuminate\Support\Str::limit($project->description, 100) }}
+                    </x-slot>
+                </x-card>
+
+                <div class="p-4">
+                    <div class="w-full p-6 text-xs bg-white shadow rounded">
+                        <ul>
+                            @foreach($project->activity as $activity)
+
+                                <li class="flex justify-between {{ $loop->last ? '' : "mb-1"}}">
+                                    @include("projects.activity.{$activity->description}")
+                                    <span class="text-gray-400">
+                                        {{ $activity->created_at->diffForHumans() }}
+                                    </span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </main>
 

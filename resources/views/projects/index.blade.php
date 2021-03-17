@@ -12,7 +12,7 @@
     <main>
         <div class="flex flex-wrap max-w-7xl mx-auto px-4">
             @forelse($projects as $project)
-                <x-card>
+                <x-card class="w-1/3">
                     <x-slot name="title">
                         <a href="{{ $project->path() }}">{{ $project->title }}</a>
                     </x-slot>
