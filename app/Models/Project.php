@@ -31,13 +31,13 @@ class Project extends Model
         return $this->tasks()->create(compact('body'));
     }
 
-    public function activities()
+    public function activity()
     {
         return $this->hasMany(Activity::class);
     }
 
     public function createActivity($description)
     {
-        return $this->activities()->create(compact('description'));
+        return $this->activity()->create(compact('description'));
     }
 }
