@@ -15,20 +15,24 @@ class Task extends Model
 
     protected $casts = ['completed' => 'boolean'];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::created(function ($task) {
-            Activity::create(['description' => 'added task', 'project_id' => $task->project->id]);
-        });
-
-        // static::updated(function ($task) {
-        //     if ( ! $task->completed) {
-        //         Activity::create(['description' => 'completed task', 'project_id' => $task->project->id]);
-        //     }
-        // });
-    }
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //
+    //     static::created(function ($task) {
+    //         return $task->project->createActivity('added task');
+    //     });
+    //
+    //     // static::updated(function ($task) {
+    //     //     if ( ! $task->completed) {
+    //     //         Activity::create(['description' => 'completed task', 'project_id' => $task->project->id]);
+    //     //     }
+    //     // });
+    //
+    //     static::deleted(function ($task) {
+    //         return $task->project->createActivity('deleted task');
+    //     });
+    // }
 
     public function complete()
     {
@@ -38,9 +42,11 @@ class Task extends Model
         $this->project->createActivity('completed task');
     }
 
-    public function incomplete()
+    public function uncomplete()
     {
-        return $this->update(['completed' => false]);
+        $this->update(['completed' => false]);
+
+        $this->project->createActivity('uncompleted task');
     }
 
     public function project()
