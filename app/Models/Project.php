@@ -39,7 +39,7 @@ class Project extends Model
         return $this->hasMany(Activity::class)->with('subject')->latest();
     }
 
-    public function invite($user)
+    public function invite(User $user)
     {
         return $this->members()->attach($user);
     }
