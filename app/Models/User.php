@@ -53,4 +53,9 @@ class User extends Authenticatable
                 $query->where('user_id', $this->id);
             })->get();
     }
+
+    public function getGravatarAttribute()
+    {
+        return "https://gravatar.com/avatar/" . md5($this->email) . "?s=36";
+    }
 }

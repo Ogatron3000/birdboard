@@ -6,9 +6,16 @@
                 <a href="{{ route('projects.index') }}">{{ __('My Projects') }}</a> / {{ $project->title }}
             </p>
         </div>
-        <x-button>
-            <a href="{{ $project->path() . '/edit' }}">Edit Project</a>
-        </x-button>
+        <div class="flex items-center">
+            @foreach($project->members as $member)
+                <img src="{{ $member->gravatar }}" alt="{{ $member->name }}'s avatar" class="mr-2 rounded-full">
+            @endforeach
+            <img src="{{ $project->user->gravatar }}" alt="{{ $project->user->name }}'s avatar" class="mr-2 rounded-full">
+
+            <x-button class="ml-4">
+                <a href="{{ $project->path() . '/edit' }}">Edit Project</a>
+            </x-button>
+        </div>
     </header>
 
     <main>
