@@ -38,4 +38,14 @@ class Project extends Model
         // add with to solve N+1 problem
         return $this->hasMany(Activity::class)->with('subject')->latest();
     }
+
+    public function invite($user)
+    {
+        return $this->members()->attach($user);
+    }
+
+    public function members()
+    {
+        return $this->belongsToMany(User::class, 'project_members');
+    }
 }
