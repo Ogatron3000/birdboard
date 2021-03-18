@@ -20,12 +20,27 @@ class InvitationsTest extends TestCase
 
         $this->post($project->path() . '/invitations', ['email' => $userToInvite->email])
             ->assertRedirect('login');
+        $this->assertFalse($project->members->contains($userToInvite));
 
         $this->signIn();
 
         $this->post($project->path() . '/invitations', ['email' => $userToInvite->email])
             ->assertStatus(403);
+        $this->assertFalse($project->members->contains($userToInvite));
+    }
 
+    public function test_members_cannot_invite_users()
+    {
+        $project = ProjectFactory::create();
+
+        $member = $this->signIn();
+
+        $project->invite($member);
+
+        $userToInvite = User::factory()->create();
+
+        $this->post($project->path() . '/invitations', ['email' => $userToInvite->email])
+            ->assertStatus(403);
         $this->assertFalse($project->members->contains($userToInvite));
     }
 

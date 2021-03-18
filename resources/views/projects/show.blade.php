@@ -42,6 +42,9 @@
                             @csrf
                             <input class="w-full border-0" type="text" name="body" placeholder="Add new task...">
                         </form>
+                        @error('body')
+                        <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
@@ -94,6 +97,26 @@
                         </ul>
                     </div>
                 </div>
+
+                @can('manage', $project)
+                    <div class="p-4">
+                        <div class="w-full p-6 bg-white shadow rounded">
+                            <h3 class="text-lg mb-4">Invite Users</h3>
+                            <form method="POST" action="{{ $project->path() . '/invitations' }}">
+                                @csrf
+                                <input type="text" name="email" placeholder="bruce@wayne.com">
+                                @error('email')
+                                <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                                @enderror
+                                <div class="flex items-center justify-end mt-4">
+                                    <x-button>
+                                        {{ __('Invite') }}
+                                    </x-button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                @endcan
 
             </div>
 
