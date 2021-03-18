@@ -19,6 +19,13 @@
                     <x-slot name="description">
                         {{ \Illuminate\Support\Str::limit($project->description, 100) }}
                     </x-slot>
+                    <x-slot name="deleteForm">
+                        <form method="POST" action="{{ $project->path() }}">
+                            @method('DELETE')
+                            @csrf
+                            <button type="submit">Delete</button>
+                        </form>
+                    </x-slot>
                 </x-card>
             @empty
                 <p>No projects yet.</p>

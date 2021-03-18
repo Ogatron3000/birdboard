@@ -24,6 +24,8 @@ class ProjectsTest extends TestCase
         $this->get($project->path())->assertRedirect(route('login'));
         $this->get($project->path() . '/edit')->assertRedirect(route('login'));
         $this->get(route('projects.create'))->assertRedirect(route('login'));
+        $this->patch($project->path(), [])->assertRedirect('login');
+        $this->delete($project->path())->assertRedirect('login');
     }
 
 
@@ -69,6 +71,24 @@ class ProjectsTest extends TestCase
         ]);
 
         $this->assertDatabaseHas('projects', $updated);
+    }
+
+    public function test_unauthorized_user_cannot_delete_project()
+    {
+        $project = ProjectFactory::create();
+
+        $this->signIn();
+
+        $this->delete($project->path())->assertStatus(403);
+    }
+
+    public function test_user_can_delete_project()
+    {
+        $project = ProjectFactory::ownedBy($this->signIn())->create();
+
+        $this->delete($project->path());
+
+        $this->assertDatabaseMissing('projects', $project->only('id'));
     }
 
     public function test_user_can_update_project_notes(): void

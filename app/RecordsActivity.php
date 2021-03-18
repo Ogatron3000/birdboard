@@ -14,7 +14,7 @@ trait RecordsActivity
     // this function allows us to get rid of Project and Task observers
     public static function bootRecordsActivity()
     {
-        $recordableEvents = static::$recordableEvents ?? ['created', 'updated', 'deleted'];
+        $recordableEvents = static::$recordableEvents ?? ['created', 'updated'];
 
         foreach ($recordableEvents as $description) {
             static::$description(function ($model) use ($description) {
