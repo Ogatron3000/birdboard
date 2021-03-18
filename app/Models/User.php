@@ -51,7 +51,7 @@ class User extends Authenticatable
         return Project::where('user_id', $this->id)
             ->orWhereHas('members', function ($query) {
                 $query->where('user_id', $this->id);
-            })->get();
+            })->with('user')->get();
     }
 
     public function getGravatarAttribute()

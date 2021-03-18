@@ -37,21 +37,10 @@ class ProjectsTest extends TestCase
 
         $this->get(route('projects.create'))->assertStatus(200);
 
-        $attributes = [
-            'title' => $this->faker->title,
-            'description' => $this->faker->sentence,
-            'notes' => $this->faker->text
-        ];
-
-        $response = $this->post(route('projects.store'), $attributes);
-
-        $project = Project::where($attributes)->get()->first();
-
-        $response->assertRedirect($project->path());
-
-        // $this->assertDatabaseHas('projects', $attributes);
-
-        $this->get(route('projects.index'))->assertSee($attributes['title']);
+        $this->followingRedirects()->post(route('projects.store'), $attributes = $this->createRawProject())
+            ->assertSee($attributes['title'])
+            ->assertSee($attributes['description'])
+            ->assertSee($attributes['notes']);
     }
 
     public function test_user_can_update_project(): void
@@ -77,7 +66,11 @@ class ProjectsTest extends TestCase
     {
         $project = ProjectFactory::create();
 
-        $this->signIn();
+        $user = $this->signIn();
+
+        $this->delete($project->path())->assertStatus(403);
+
+        $project->invite($user);
 
         $this->delete($project->path())->assertStatus(403);
     }

@@ -12,19 +12,9 @@
     <main>
         <div class="flex flex-wrap max-w-7xl mx-auto px-4">
             @forelse($projects as $project)
-                <x-card class="w-1/3">
+                <x-card class="w-1/3" :project="$project">
                     <x-slot name="title">
                         <a href="{{ $project->path() }}">{{ $project->title }}</a>
-                    </x-slot>
-                    <x-slot name="description">
-                        {{ \Illuminate\Support\Str::limit($project->description, 100) }}
-                    </x-slot>
-                    <x-slot name="deleteForm">
-                        <form method="POST" action="{{ $project->path() }}">
-                            @method('DELETE')
-                            @csrf
-                            <button type="submit">Delete</button>
-                        </form>
                     </x-slot>
                 </x-card>
             @empty
