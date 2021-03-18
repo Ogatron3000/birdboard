@@ -36,7 +36,7 @@ class Project extends Model
     public function activity()
     {
         // add with to solve N+1 problem
-        return $this->hasMany(Activity::class)->with('subject')->latest();
+        return $this->hasMany(Activity::class)->with('subject', 'user')->latest();
     }
 
     public function invite(User $user)

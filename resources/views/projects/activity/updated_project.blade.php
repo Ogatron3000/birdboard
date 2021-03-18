@@ -1,6 +1,6 @@
 @if(count($activity->changes) === 1)
-    {{ $activity->user->name }} updated project {{ key($activity->changes) }}
+    {{ auth()->user()->name }} updated project {{ key($activity->changes) }}
 @else
-    {{ $activity->user->name }} updated the project
+    {{ auth()->user()->name }} updated the project
 @endif
 

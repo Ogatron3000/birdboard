@@ -1,1 +1,1 @@
-{{ $activity->user->name }} deleted a task
+{{ auth()->user()->name }} deleted a task
