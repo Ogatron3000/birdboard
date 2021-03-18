@@ -119,7 +119,7 @@ class ProjectsTest extends TestCase
         $this->assertDatabaseMissing('projects', $updated);
     }
 
-    public function test_user_can_view_only_their_projects(): void
+    public function test_user_can_view_their_projects(): void
     {
         $project = ProjectFactory::ownedBy($this->signIn())->create();
 
@@ -128,6 +128,21 @@ class ProjectsTest extends TestCase
         $this->get(route('projects.index'))
             ->assertSee($project->title)
             ->assertDontSee($otherProject->title);
+    }
+
+    public function test_user_can_view_projects_he_is_invited_to(): void
+    {
+        $project = ProjectFactory::create();
+
+        $user = $this->signIn();
+
+        $this->get(route('projects.index'))
+            ->assertDontSee($project->title);
+
+        $project->invite($user);
+
+        $this->get(route('projects.index'))
+            ->assertSee($project->title);
     }
 
     public function test_user_can_view_their_single_project(): void
